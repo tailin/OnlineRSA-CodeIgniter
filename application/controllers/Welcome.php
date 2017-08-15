@@ -47,4 +47,21 @@ class Welcome extends CI_Controller {
         fwrite($privatekeyXML, $rsa->getPrivateKey());
         echo json_encode($keypair);
     }
+
+    public function download()
+    {
+        $tmpPath = dirname(BASEPATH).'/tmp';
+        $file = isset($_GET['file']) ? $_GET['file'] : null;
+
+        if (isset($_GET['file'])
+            && file_exists("$tmpPath/$file")
+            && preg_match('/[public|private]key.[xml|pem]/', $file) > 0) {
+            header('Content-type: application/force-download');
+            header('Content-Transfer-Encoding: Binary');
+            header("Content-Disposition: attachment;filename=$file");
+            echo file_get_contents("$tmpPath/$file");
+        } else {
+            die ("File Not Found");
+        }
+    }
 }

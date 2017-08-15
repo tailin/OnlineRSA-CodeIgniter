@@ -122,7 +122,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     function download(filename)
     {
-        var url = '/action.php?method=download&file='+filename;
+        let url = '/welcome/download?file='+filename;
         window.open(url, '_blank');
     }
 </script>
