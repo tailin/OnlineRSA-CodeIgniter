@@ -1,6 +1,6 @@
 {
-	"description": "The CodeIgniter framework",
-	"name": "codeigniter/framework",
+	"description": "OnlineRSA remake by CodeIgniter.",
+	"name": "chivincent/onlinersa-codeigniter",
 	"type": "project",
 	"homepage": "https://codeigniter.com",
 	"license": "MIT",
