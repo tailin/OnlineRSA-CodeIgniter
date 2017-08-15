@@ -22,24 +22,31 @@ class Welcome extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see https://codeigniter.com/user_guide/general/urls.html
 	 */
-	public function index()
+
+	protected $tmpPath;
+
+	public function __construct()
+    {
+        parent::__construct();
+        $this->tmpPath = dirname(BASEPATH).'/tmp';
+    }
+
+    public function index()
 	{
 		$this->load->view('index');
 	}
 
 	public function genKey()
     {
-        $tmpPath = dirname(BASEPATH).'/tmp';
-
         header('Content-Type: application/json');
         $rsa = new RSA();
         $rsa->setPrivateKeyFormat(RSA::PRIVATE_FORMAT_XML);
         $rsa->setPublicKeyFormat(RSA::PUBLIC_FORMAT_XML);
         $keypair = $rsa->createKey();
-        $publickeyXML = fopen("$tmpPath/publickey.xml", 'w');
-        $privatekeyXML = fopen("$tmpPath/privatekey.xml", 'w');
-        $publickeyPem = fopen("$tmpPath/publickey.pem", 'w');
-        $privatekeyPem = fopen("$tmpPath/privatekey.pem", 'w');
+        $publickeyXML = fopen("{$this->tmpPath}/publickey.xml", 'w');
+        $privatekeyXML = fopen("{$this->tmpPath}/privatekey.xml", 'w');
+        $publickeyPem = fopen("{$this->tmpPath}/publickey.pem", 'w');
+        $privatekeyPem = fopen("{$this->tmpPath}/privatekey.pem", 'w');
         $rsa->loadKey($keypair['privatekey']);
         fwrite($publickeyPem, $keypair['publickey']);
         fwrite($privatekeyPem, $keypair['privatekey']);
@@ -50,18 +57,37 @@ class Welcome extends CI_Controller {
 
     public function download()
     {
-        $tmpPath = dirname(BASEPATH).'/tmp';
         $file = isset($_GET['file']) ? $_GET['file'] : null;
 
         if (isset($_GET['file'])
-            && file_exists("$tmpPath/$file")
+            && file_exists("{$this->tmpPath}/$file")
             && preg_match('/[public|private]key.[xml|pem]/', $file) > 0) {
             header('Content-type: application/force-download');
             header('Content-Transfer-Encoding: Binary');
             header("Content-Disposition: attachment;filename=$file");
-            echo file_get_contents("$tmpPath/$file");
+            echo file_get_contents("{$this->tmpPath}/$file");
         } else {
             die ("File Not Found");
         }
+    }
+
+    public function encrypt()
+    {
+        header('Content-Type: application/json');
+        $rsa = new RSA();
+        $rsa->loadKey(file_get_contents("{$this->tmpPath}/publickey.pem"));
+        $plaintext = $_POST['plaintext'];
+        $ciphertext = $rsa->encrypt($plaintext);
+        echo json_encode(['ciphertext' => base64_encode($ciphertext)]);
+    }
+
+    public function decrypt()
+    {
+        header('Content-Type: application/json');
+        $rsa = new RSA();
+        $rsa->loadKey(file_get_contents("{$this->tmpPath}/privatekey.pem"));
+        $ciphertext = base64_decode($_POST['ciphertext']);
+        $plaintext = $rsa->decrypt($ciphertext);
+        echo json_encode(['plaintext' => $plaintext]);
     }
 }

@@ -79,45 +79,45 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         $('#privatekey').val(json.privatekey);
     }
 
-    function encrypt()
+    async function encrypt()
     {
-        var form = new FormData();
+        let form = new FormData();
         form.append('plaintext', $('#plaintext').val());
-        fetch('/action.php?method=encrypt', {
+
+        let res = await fetch('/welcome/encrypt', {
             method: 'POST',
             body: form
-        })
-            .then(function (response){
-                return response.json();
-            })
-            .then(function (json){
-                console.log('parsed json', json);
-                $('#ciphertext-php').val(json.ciphertext);
-            })
-            .catch(function (ex) {
-                console.log('parsing failed', ex);
-            });
+        });
+        try {
+            let json = await res.json();
+            $('#ciphertext-php').val(json.ciphertext);
+        } catch (error) {
+            $('#ciphertext-php').val('!!!!ERROR!!!!');
+            console.error(error)
+        }
+
+
     }
 
-    function decrypt()
+    async function decrypt()
     {
-        var form = new FormData();
+        let form = new FormData();
         form.append('ciphertext', $('#ciphertext').val());
-        fetch('/action.php?method=decrypt', {
+
+        let res = await fetch('/welcome/decrypt', {
             method: 'POST',
             body: form
-        })
-            .then(function (response){
-                return response.json();
-            })
-            .then(function (json){
-                console.log('parsed json', json);
-                $('#plaintext-php').val(json.plaintext);
-            })
-            .catch(function (ex) {
-                console.log('parsing failed', ex);
-                alert('Something Error, please check the console log');
-            });
+        });
+
+        try {
+            let json = await res.json();
+            $('#plaintext-php').val(json.plaintext);
+        } catch (error) {
+            $('#plaintext-php').val('!!!!ERROR!!!!');
+            console.error(error)
+        }
+
+
     }
 
     function download(filename)
