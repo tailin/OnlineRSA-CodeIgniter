@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+
 class Welcome extends CI_Controller {
 
 	/**
@@ -18,8 +19,38 @@ class Welcome extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see https://codeigniter.com/user_guide/general/urls.html
 	 */
-	public function index()
+
+	protected $tmpPath;
+
+	public function __construct()
+    {
+        parent::__construct();
+        $this->tmpPath = dirname(BASEPATH).'/tmp';
+        $this->load->model('Key');
+    }
+
+    public function index()
 	{
-		$this->load->view('welcome_message');
+		$this->load->view('index');
 	}
+
+	public function genKey()
+    {
+        $this->Key->gen();
+    }
+
+    public function download()
+    {
+        $this->Key->download();
+    }
+
+    public function encrypt()
+    {
+        $this->Key->encrypt();
+    }
+
+    public function decrypt()
+    {
+        $this->Key->decrypt();
+    }
 }
