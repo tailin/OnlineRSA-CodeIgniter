@@ -71,20 +71,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <script>
-    function genKey()
+    async function genKey()
     {
-        fetch('/action.php?method=create')
-            .then(function (response){
-                return response.json();
-            })
-            .then(function (json){
-                console.log('parsed json', json);
-                $('#publickey').val(json.publickey);
-                $('#privatekey').val(json.privatekey);
-            })
-            .catch(function(ex) {
-                console.log('parsing failed', ex)
-            });
+        let res = await fetch('/welcome/genKey');
+        let json = await res.json();
+        $('#publickey').val(json.publickey);
+        $('#privatekey').val(json.privatekey);
     }
 
     function encrypt()
