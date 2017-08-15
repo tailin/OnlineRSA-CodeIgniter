@@ -131,7 +131,7 @@ return array(
 	'gpg'   =>	'application/gpg-keys',
 	'sst'   =>	'application/octet-stream',
 	'csr'   =>	'application/octet-stream',
-	'rsa'   =>	'application/x-pkcs7',
+	'Key' =>	'application/x-pkcs7',
 	'cer'   =>	array('application/pkix-cert', 'application/x-x509-ca-cert'),
 	'3g2'   =>	'video/3gpp2',
 	'3gp'   =>	array('video/3gp', 'video/3gpp'),
